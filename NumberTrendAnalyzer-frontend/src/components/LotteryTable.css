@@ -1,0 +1,199 @@
+/* src/components/LotteryTable.css */
+
+:root {
+    --bg: #0f172a;
+    --card: #101a31;
+    --card-top: linear-gradient(135deg, #152347, #0d1730);
+    --border: #1f2a44;
+    --muted: #9fb4d9;
+    --accent: #38bdf8;
+    --accent-strong: #f43f5e;
+    --text: #e8edfb;
+    --shadow: 0 15px 45px rgba(0, 0, 0, 0.35);
+}
+
+.lottery-container {
+    font-family: 'Inter', 'SF Pro Display', Arial, sans-serif;
+    width: min(720px, 100% - 48px);
+    max-width: 720px;
+    margin: 32px auto;
+    align-self: center; /* Nếu parent là flex thì vẫn được căn giữa */
+    display: block;
+    background: var(--card-top);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.lottery-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 18px 22px;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--muted);
+    letter-spacing: 0.1px;
+}
+
+.lottery-header a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 700;
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.lottery-header a:hover {
+    color: #5eead4;
+    text-shadow: 0 0 8px rgba(94, 234, 212, 0.35);
+}
+
+.lottery-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    background: var(--card);
+}
+
+.lottery-table tr {
+    transition: background 0.18s ease, transform 0.2s ease;
+}
+
+.lottery-table tr:hover {
+    background: rgba(56, 189, 248, 0.06);
+    transform: translateY(-1px);
+}
+
+.lottery-table td {
+    border-bottom: 1px solid var(--border);
+    padding: 14px 10px;
+    vertical-align: middle;
+    color: var(--text);
+}
+
+/* Cột Tiêu đề giải (G.ĐB, G.1...) */
+.label-col {
+    width: 16%;
+    background: rgba(255, 255, 255, 0.02);
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-right: 1px solid var(--border);
+    font-weight: 700;
+}
+
+/* Cột Nội dung số */
+.content-col {
+    width: 84%;
+}
+
+/* Mã Đặc biệt (Màu xanh) */
+.code-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.code-item {
+    padding: 6px 10px;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 8px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Giải Đặc Biệt (To, Đỏ, Đậm) */
+.special-prize {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 220px;
+    padding: 10px 18px;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--accent-strong);
+    letter-spacing: 2px;
+    background: radial-gradient(circle at 20% 20%, rgba(244, 63, 94, 0.18), transparent 45%), rgba(244, 63, 94, 0.07);
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    border-radius: 14px;
+    box-shadow: 0 12px 28px rgba(244, 63, 94, 0.18);
+}
+
+/* Các số đậm bình thường */
+.text-bold {
+    font-weight: 700;
+    font-size: 20px;
+    color: #f8fafc;
+    letter-spacing: 0.6px;
+}
+
+/* Riêng giải 7 màu đỏ */
+.text-red .text-bold {
+    color: var(--accent-strong);
+}
+
+/* Layout cho các giải có nhiều số */
+.number-row {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 14px;
+}
+
+.number-row-4 {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 12px;
+    width: 92%;
+    margin: 0 auto;
+}
+
+/* Layout Grid cho G.3 và G.5 (3 số 1 hàng) */
+.number-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    justify-items: center;
+}
+
+.lottery-table tr:last-child td {
+    border-bottom: none;
+}
+
+.lottery-shell {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .lottery-container {
+        margin: 16px;
+    }
+
+    .lottery-header {
+        flex-wrap: wrap;
+        gap: 4px;
+        font-size: 14px;
+    }
+
+    .label-col {
+        font-size: 12px;
+    }
+
+    .text-bold {
+        font-size: 18px;
+    }
+
+    .special-prize {
+        min-width: auto;
+        width: 100%;
+    }
+}
