@@ -2,11 +2,13 @@
 import { useState, useEffect } from 'react';
 import LotteryTable, {type LotteryData } from './components/LotteryTable';
 import Header from './components/Header';
+import Dashboard from './components/Dashboard';
 import './App.css';
 
 const API_BASE_URL = 'http://localhost:8080/api/lottery';
 
 function App() {
+    const [activeTab, setActiveTab] = useState<string>('home'); // Mặc định là 'home' để hiện dashboard
     const [selectedDate, setSelectedDate] = useState<string>(() => {
         // Set ngày mặc định là hôm nay
         const today = new Date();
@@ -16,10 +18,12 @@ function App() {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Fetch dữ liệu từ API khi selectedDate thay đổi
+    // Fetch dữ liệu từ API khi selectedDate thay đổi (chỉ khi đang ở tab history)
     useEffect(() => {
-        fetchLotteryData(selectedDate);
-    }, [selectedDate]);
+        if (activeTab === 'history') {
+            fetchLotteryData(selectedDate);
+        }
+    }, [selectedDate, activeTab]);
 
     const fetchLotteryData = async (date: string) => {
         setLoading(true);
@@ -54,22 +58,12 @@ function App() {
         setSelectedDate(e.target.value);
     };
 
-    return (
-        <div style={{ display: 'flex', minHeight: '100vh', fontFamily: 'Arial', width: '100%', overflow: 'hidden' }}>
-            <Header />
-            <main style={{ 
-                marginLeft: '260px',
-                padding: '40px',
-                background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-                height: '100vh',
-                display: 'flex',
-                alignItems: 'flex-start',
-                justifyContent: 'center',
-                width: 'calc(100vw - 260px)',
-                boxSizing: 'border-box',
-                overflowX: 'hidden',
-                overflowY: 'auto'
-            }}>
+    // Render nội dung theo activeTab
+    const renderContent = () => {
+        if (activeTab === 'home') {
+            return <Dashboard />;
+        } else if (activeTab === 'history') {
+            return (
                 <div className="search-container">
                     <div className="search-header">
                         <h2 className="search-title">
@@ -122,6 +116,41 @@ function App() {
                         )}
                     </div>
                 </div>
+            );
+        } else {
+            // Các tab khác hiển thị màn hình trắng
+            return (
+                <div style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    background: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    {/* Màn hình trắng tạm thời */}
+                </div>
+            );
+        }
+    };
+
+    return (
+        <div style={{ display: 'flex', minHeight: '100vh', fontFamily: 'Arial', width: '100%', overflow: 'hidden' }}>
+            <Header activeTab={activeTab} onTabChange={setActiveTab} />
+            <main style={{ 
+                marginLeft: '260px',
+                padding: '40px',
+                background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                height: '100vh',
+                display: 'flex',
+                alignItems: (activeTab === 'history' || activeTab === 'home') ? 'flex-start' : 'center',
+                justifyContent: 'center',
+                width: 'calc(100vw - 260px)',
+                boxSizing: 'border-box',
+                overflowX: 'hidden',
+                overflowY: 'auto'
+            }}>
+                {renderContent()}
             </main>
         </div>
     );

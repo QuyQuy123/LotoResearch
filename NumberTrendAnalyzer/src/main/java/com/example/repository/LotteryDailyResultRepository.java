@@ -2,6 +2,7 @@ package com.example.repository;
 
 import com.example.domain.LotteryDailyResult;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -18,4 +19,10 @@ public interface LotteryDailyResultRepository extends JpaRepository<LotteryDaily
      * Tìm kết quả theo ngày
      */
     Optional<LotteryDailyResult> findByDrawDate(LocalDate drawDate);
+    
+    /**
+     * Lấy ngày cập nhật gần nhất
+     */
+    @Query("SELECT MAX(r.drawDate) FROM LotteryDailyResult r")
+    Optional<LocalDate> findLatestDrawDate();
 }
