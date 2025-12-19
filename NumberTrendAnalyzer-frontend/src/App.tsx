@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import LotteryTable, {type LotteryData } from './components/LotteryTable';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
+import Analysis from './components/Analysis';
 import './App.css';
 
 const API_BASE_URL = 'http://localhost:8080/api/lottery';
@@ -17,6 +18,8 @@ function App() {
     const [lotteryData, setLotteryData] = useState<LotteryData | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [updating, setUpdating] = useState<boolean>(false);
+    const [updateMessage, setUpdateMessage] = useState<string | null>(null);
 
     // Fetch dữ liệu từ API khi selectedDate thay đổi (chỉ khi đang ở tab history)
     useEffect(() => {
@@ -58,6 +61,34 @@ function App() {
         setSelectedDate(e.target.value);
     };
 
+    const handleAutoUpdate = async () => {
+        setUpdating(true);
+        setUpdateMessage(null);
+        setError(null);
+        
+        try {
+            const response = await fetch('http://localhost:8080/api/crawl/auto-update');
+            
+            if (!response.ok) {
+                throw new Error('Có lỗi xảy ra khi cập nhật dữ liệu');
+            }
+            
+            const result = await response.text();
+            setUpdateMessage(result);
+            
+            // Sau khi cập nhật thành công, refresh dữ liệu hiện tại nếu đang xem ngày hôm nay
+            const today = new Date().toISOString().split('T')[0];
+            if (selectedDate === today) {
+                fetchLotteryData(selectedDate);
+            }
+        } catch (err) {
+            console.error('Error updating data:', err);
+            setError('Không thể kết nối đến server để cập nhật dữ liệu.');
+        } finally {
+            setUpdating(false);
+        }
+    };
+
     // Render nội dung theo activeTab
     const renderContent = () => {
         if (activeTab === 'home') {
@@ -82,13 +113,48 @@ function App() {
                                     className="search-date-input"
                                 />
                             </div>
+                            <button
+                                onClick={handleAutoUpdate}
+                                disabled={updating}
+                                className="update-button"
+                                style={{
+                                    marginLeft: '16px',
+                                    padding: '10px 20px',
+                                    backgroundColor: updating ? '#94a3b8' : '#3b82f6',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    cursor: updating ? 'not-allowed' : 'pointer',
+                                    fontSize: '14px',
+                                    fontWeight: '500',
+                                    transition: 'background-color 0.2s'
+                                }}
+                            >
+                                {updating ? 'Đang cập nhật...' : '🔄 Cập nhật dữ liệu'}
+                            </button>
                         </div>
                     </div>
 
                     <div className="search-content">
                         {loading && (
-                            <div style={{ textAlign: 'center', padding: '40px', color: '#475569' }}>
+                            <div style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
                                 <p>Đang tải dữ liệu...</p>
+                            </div>
+                        )}
+                        
+                        {updateMessage && (
+                            <div style={{ 
+                                textAlign: 'center', 
+                                padding: '20px', 
+                                color: '#34d399',
+                                background: 'rgba(5, 150, 105, 0.15)',
+                                border: '1px solid rgba(5, 150, 105, 0.3)',
+                                borderRadius: '12px',
+                                margin: '20px 0',
+                                fontSize: '14px',
+                                fontWeight: '500'
+                            }}>
+                                <p>{updateMessage}</p>
                             </div>
                         )}
                         
@@ -96,8 +162,9 @@ function App() {
                             <div style={{ 
                                 textAlign: 'center', 
                                 padding: '40px', 
-                                color: '#ef4444',
-                                background: 'rgba(239, 68, 68, 0.1)',
+                                color: '#f87171',
+                                background: 'rgba(239, 68, 68, 0.15)',
+                                border: '1px solid rgba(239, 68, 68, 0.3)',
                                 borderRadius: '12px',
                                 margin: '20px 0'
                             }}>
@@ -117,18 +184,21 @@ function App() {
                     </div>
                 </div>
             );
+        } else if (activeTab === 'analysis') {
+            return <Analysis />;
         } else {
-            // Các tab khác hiển thị màn hình trắng
+            // Các tab khác hiển thị màn hình dark
             return (
                 <div style={{ 
                     width: '100%', 
                     height: '100%', 
-                    background: '#ffffff',
+                    background: 'transparent',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    color: '#e2e8f0'
                 }}>
-                    {/* Màn hình trắng tạm thời */}
+                    {/* Màn hình tạm thời */}
                 </div>
             );
         }
@@ -140,10 +210,10 @@ function App() {
             <main style={{ 
                 marginLeft: '260px',
                 padding: '40px',
-                background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                background: 'linear-gradient(135deg, #0f172a 0%, #1a202c 100%)',
                 height: '100vh',
                 display: 'flex',
-                alignItems: (activeTab === 'history' || activeTab === 'home') ? 'flex-start' : 'center',
+                alignItems: (activeTab === 'history' || activeTab === 'home' || activeTab === 'analysis') ? 'flex-start' : 'center',
                 justifyContent: 'center',
                 width: 'calc(100vw - 260px)',
                 boxSizing: 'border-box',

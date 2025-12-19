@@ -1,15 +1,15 @@
-/* src/components/LotteryTable.css */
+/* src/components/LotteryTable.css - Dark Theme */
 
 :root {
     --bg: #0f172a;
-    --card: #101a31;
-    --card-top: linear-gradient(135deg, #152347, #0d1730);
-    --border: #1f2a44;
-    --muted: #9fb4d9;
-    --accent: #38bdf8;
-    --accent-strong: #f43f5e;
-    --text: #e8edfb;
-    --shadow: 0 15px 45px rgba(0, 0, 0, 0.35);
+    --card: #1e293b;
+    --card-top: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    --border: rgba(148, 163, 184, 0.2);
+    --muted: #94a3b8;
+    --accent: #60a5fa;
+    --accent-strong: #f87171;
+    --text: #e2e8f0;
+    --shadow: 0 15px 45px rgba(0, 0, 0, 0.5);
 }
 
 .lottery-container {
@@ -17,13 +17,19 @@
     width: min(720px, 100% - 48px);
     max-width: 720px;
     margin: 32px auto;
-    align-self: center; /* Nếu parent là flex thì vẫn được căn giữa */
+    align-self: center;
     display: block;
     background: var(--card-top);
     border: 1px solid var(--border);
     border-radius: 18px;
     box-shadow: var(--shadow);
     overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.lottery-container:hover {
+    border-color: rgba(148, 163, 184, 0.3);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
 }
 
 .lottery-header {
@@ -43,12 +49,12 @@
     color: var(--accent);
     text-decoration: none;
     font-weight: 700;
-    transition: color 0.2s ease, text-shadow 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .lottery-header a:hover {
-    color: #5eead4;
-    text-shadow: 0 0 8px rgba(94, 234, 212, 0.35);
+    color: #93c5fd;
+    text-shadow: 0 0 8px rgba(96, 165, 250, 0.4);
 }
 
 .lottery-table {
@@ -59,11 +65,11 @@
 }
 
 .lottery-table tr {
-    transition: background 0.18s ease, transform 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .lottery-table tr:hover {
-    background: rgba(56, 189, 248, 0.06);
+    background: rgba(96, 165, 250, 0.08);
     transform: translateY(-1px);
 }
 
@@ -104,10 +110,16 @@
 
 .code-item {
     padding: 6px 10px;
-    background: rgba(56, 189, 248, 0.1);
-    border: 1px solid rgba(56, 189, 248, 0.35);
+    background: rgba(96, 165, 250, 0.15);
+    border: 1px solid rgba(96, 165, 250, 0.4);
     border-radius: 8px;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
+}
+
+.code-item:hover {
+    background: rgba(96, 165, 250, 0.25);
+    transform: scale(1.05);
 }
 
 /* Giải Đặc Biệt (To, Đỏ, Đậm) */
@@ -121,10 +133,17 @@
     font-weight: 800;
     color: var(--accent-strong);
     letter-spacing: 2px;
-    background: radial-gradient(circle at 20% 20%, rgba(244, 63, 94, 0.18), transparent 45%), rgba(244, 63, 94, 0.07);
-    border: 1px solid rgba(244, 63, 94, 0.35);
+    background: radial-gradient(circle at 20% 20%, rgba(248, 113, 113, 0.25), transparent 45%), rgba(248, 113, 113, 0.1);
+    border: 1px solid rgba(248, 113, 113, 0.4);
     border-radius: 14px;
-    box-shadow: 0 12px 28px rgba(244, 63, 94, 0.18);
+    box-shadow: 0 12px 28px rgba(248, 113, 113, 0.25);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+.special-prize:hover {
+    transform: scale(1.05);
+    box-shadow: 0 16px 32px rgba(248, 113, 113, 0.35);
 }
 
 /* Các số đậm bình thường */
@@ -133,11 +152,21 @@
     font-size: 20px;
     color: #f8fafc;
     letter-spacing: 0.6px;
+    transition: all 0.2s ease;
+}
+
+.text-bold:hover {
+    transform: scale(1.1);
+    color: #e2e8f0;
 }
 
 /* Riêng giải 7 màu đỏ */
 .text-red .text-bold {
     color: var(--accent-strong);
+}
+
+.text-red .text-bold:hover {
+    color: #fca5a5;
 }
 
 /* Layout cho các giải có nhiều số */
@@ -195,5 +224,6 @@
     .special-prize {
         min-width: auto;
         width: 100%;
+        font-size: 28px;
     }
 }

@@ -25,6 +25,9 @@ public class DashboardStatsDTO {
     // Dự báo nhanh
     private QuickForecastDTO quickForecast;
     
+    // Gợi ý dựa trên tổng hợp 3 thuật toán
+    private RecommendationDTO recommendation;
+    
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -50,6 +53,18 @@ public class DashboardStatsDTO {
         private Integer rangeEnd; // Khoảng dự đoán kết thúc
         private Double confidenceScore; // Độ tin cậy (0-1)
         private String algorithmUsed; // Thuật toán sử dụng
+    }
+    
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RecommendationDTO {
+        private String recommendedAlgorithm; // Thuật toán được đề xuất
+        private Integer recommendedRangeSize; // Khoảng số được đề xuất
+        private Integer recommendedRangeStart; // Khoảng dự đoán bắt đầu
+        private Integer recommendedRangeEnd; // Khoảng dự đoán kết thúc
+        private Double recommendedConfidenceScore; // Độ tin cậy của gợi ý
+        private String reason; // Lý do đề xuất
     }
 }
 

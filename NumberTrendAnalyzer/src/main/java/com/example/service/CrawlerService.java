@@ -25,4 +25,10 @@ public interface CrawlerService {
      * @return DTO chứa dữ liệu xổ số, null nếu không tìm thấy
      */
     LotteryDataDTO getLotteryDataByDate(LocalDate date);
+    
+    /**
+     * Tự động cập nhật dữ liệu từ ngày cuối cùng trong database đến hôm nay
+     * @return Thông báo kết quả cập nhật
+     */
+    String autoUpdateFromLastDate();
 }

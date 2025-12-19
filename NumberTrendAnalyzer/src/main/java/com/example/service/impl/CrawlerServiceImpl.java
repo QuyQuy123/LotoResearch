@@ -163,6 +163,51 @@ public class CrawlerServiceImpl implements CrawlerService {
                 .map(this::convertToDTO)
                 .orElse(null);
     }
+    
+    @Override
+    public String autoUpdateFromLastDate() {
+        // Lấy ngày cuối cùng trong database
+        LocalDate lastDate = resultRepo.findLatestDrawDate().orElse(null);
+        LocalDate today = LocalDate.now();
+        
+        if (lastDate == null) {
+            return "Không có dữ liệu trong database. Vui lòng cập nhật dữ liệu ban đầu.";
+        }
+        
+        // Nếu ngày cuối cùng là hôm nay hoặc sau hôm nay, không cần cập nhật
+        if (!lastDate.isBefore(today)) {
+            return "Dữ liệu đã được cập nhật đến hôm nay (" + today.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + ").";
+        }
+        
+        // Bắt đầu từ ngày tiếp theo ngày cuối cùng
+        LocalDate startDate = lastDate.plusDays(1);
+        int totalDays = 0;
+        int successDays = 0;
+        int skippedDays = 0;
+        
+        // Cập nhật từ startDate đến today
+        LocalDate current = startDate;
+        while (!current.isAfter(today)) {
+            totalDays++;
+            String result = crawlAndSaveData(current);
+            if (result.contains("Thành công")) {
+                successDays++;
+            } else if (result.contains("đã tồn tại")) {
+                skippedDays++;
+            }
+            current = current.plusDays(1);
+            try { 
+                Thread.sleep(500); // Delay để tránh spam request
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        
+        return String.format("Hoàn thành! Đã cập nhật %d ngày (Thành công: %d, Đã tồn tại: %d, Lỗi: %d). Từ %s đến %s.", 
+                totalDays, successDays, skippedDays, totalDays - successDays - skippedDays,
+                startDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                today.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+    }
 
     // Convert từ Entity sang DTO
     private LotteryDataDTO convertToDTO(LotteryDailyResult result) {

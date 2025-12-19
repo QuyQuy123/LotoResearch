@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.service.CrawlerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -32,5 +33,18 @@ public class CrawlerController {
         new Thread(() -> crawlerService.crawlRange(from, to)).start();
 
         return "Đang bắt đầu cào dữ liệu từ " + from + " đến " + to + ". Hãy kiểm tra console log.";
+    }
+    
+    // API 3: Tự động cập nhật từ ngày cuối cùng đến hôm nay
+    // Gọi: GET /api/crawl/auto-update
+    @GetMapping("/auto-update")
+    @CrossOrigin(origins = "*")
+    public ResponseEntity<String> autoUpdate() {
+        try {
+            String result = crawlerService.autoUpdateFromLastDate();
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Lỗi khi cập nhật dữ liệu: " + e.getMessage());
+        }
     }
 }

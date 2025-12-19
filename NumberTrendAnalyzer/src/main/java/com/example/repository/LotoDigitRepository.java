@@ -19,11 +19,26 @@ public interface LotoDigitRepository extends JpaRepository<LotoDigit, Long> {
     LocalDate findLastAppearanceDate(@Param("number") Integer number);
     
     /**
+     * Tìm ngày xuất hiện gần nhất của một số lô trước một ngày cụ thể
+     */
+    @Query("SELECT MAX(ld.dailyResult.drawDate) FROM LotoDigit ld " +
+           "WHERE ld.value = :number AND ld.dailyResult.drawDate < :beforeDate")
+    LocalDate findLastAppearanceDateBefore(@Param("number") Integer number, @Param("beforeDate") LocalDate beforeDate);
+    
+    /**
      * Đếm số lần xuất hiện của một số lô trong khoảng thời gian
+     * Đếm tất cả các lần xuất hiện (kể cả nhiều lần trong cùng một ngày)
+     */
+    @Query("SELECT COUNT(*) FROM LotoDigit ld " +
+           "WHERE ld.value = :number AND ld.dailyResult.drawDate >= :fromDate AND ld.dailyResult.drawDate <= :toDate")
+    Long countAppearancesInRange(@Param("number") Integer number, @Param("fromDate") LocalDate fromDate, @Param("toDate") LocalDate toDate);
+    
+    /**
+     * Đếm số lần xuất hiện của một số lô từ một ngày trở đi (không giới hạn ngày kết thúc)
      */
     @Query("SELECT COUNT(DISTINCT ld.dailyResult.drawDate) FROM LotoDigit ld " +
            "WHERE ld.value = :number AND ld.dailyResult.drawDate >= :fromDate")
-    Long countAppearancesInRange(@Param("number") Integer number, @Param("fromDate") LocalDate fromDate);
+    Long countAppearancesFromDate(@Param("number") Integer number, @Param("fromDate") LocalDate fromDate);
     
     /**
      * Lấy danh sách các số lô đã xuất hiện (distinct)
