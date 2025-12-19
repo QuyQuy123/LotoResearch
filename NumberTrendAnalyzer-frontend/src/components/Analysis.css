@@ -157,6 +157,11 @@
     color: #64748b;
 }
 
+.match-cell.match-2 {
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.1);
+}
+
 .loading, .error {
     text-align: center;
     padding: 40px;
@@ -239,6 +244,67 @@
     color: #e2e8f0;
     font-weight: 500;
     min-width: 70px;
+}
+
+/* CSS cho bảng thống kê Hàm chia 3 - Màu nền theo nhóm */
+.empty-stats-table tbody tr.stats-row-dau-db {
+    background: rgba(59, 130, 246, 0.15); /* Màu xanh dương nhạt cho Đầu ĐB */
+}
+
+.empty-stats-table tbody tr.stats-row-dau-db:hover {
+    background: rgba(59, 130, 246, 0.25);
+}
+
+.empty-stats-table tbody tr.stats-row-db {
+    background: rgba(139, 92, 246, 0.15); /* Màu tím nhạt cho ĐB */
+}
+
+.empty-stats-table tbody tr.stats-row-db:hover {
+    background: rgba(139, 92, 246, 0.25);
+}
+
+.empty-stats-table tbody tr.stats-row-dau-g1 {
+    background: rgba(236, 72, 153, 0.15); /* Màu hồng nhạt cho Đầu G1 */
+}
+
+.empty-stats-table tbody tr.stats-row-dau-g1:hover {
+    background: rgba(236, 72, 153, 0.25);
+}
+
+.empty-stats-table tbody tr.stats-row-g1 {
+    background: rgba(34, 197, 94, 0.15); /* Màu xanh lá nhạt cho G1 */
+}
+
+.empty-stats-table tbody tr.stats-row-g1:hover {
+    background: rgba(34, 197, 94, 0.25);
+}
+
+/* Đảm bảo màu chữ vẫn rõ ràng trên nền màu */
+.empty-stats-table tbody tr.stats-row-dau-db td,
+.empty-stats-table tbody tr.stats-row-db td,
+.empty-stats-table tbody tr.stats-row-dau-g1 td,
+.empty-stats-table tbody tr.stats-row-g1 td {
+    color: #e2e8f0;
+}
+
+.empty-stats-table tbody tr.stats-row-dau-db .stats-column-name {
+    color: #93c5fd; /* Màu xanh dương sáng hơn cho tên cột */
+    font-weight: 700;
+}
+
+.empty-stats-table tbody tr.stats-row-db .stats-column-name {
+    color: #c4b5fd; /* Màu tím sáng hơn cho tên cột */
+    font-weight: 700;
+}
+
+.empty-stats-table tbody tr.stats-row-dau-g1 .stats-column-name {
+    color: #f9a8d4; /* Màu hồng sáng hơn cho tên cột */
+    font-weight: 700;
+}
+
+.empty-stats-table tbody tr.stats-row-g1 .stats-column-name {
+    color: #86efac; /* Màu xanh lá sáng hơn cho tên cột */
+    font-weight: 700;
 }
 
 /* Pagination */

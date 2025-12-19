@@ -24,13 +24,13 @@ const AnalysisSelector: React.FC<AnalysisSelectorProps> = ({ onSelectAlgorithm }
             id: 'divide-3',
             name: 'Hàm chia 3',
             description: 'Phân tích theo hàm chia 3',
-            available: false
+            available: true
         },
         {
             id: 'prime',
             name: 'Hàm số nguyên tố',
             description: 'Phân tích theo số nguyên tố',
-            available: false
+            available: true
         },
         {
             id: 'merge-2',

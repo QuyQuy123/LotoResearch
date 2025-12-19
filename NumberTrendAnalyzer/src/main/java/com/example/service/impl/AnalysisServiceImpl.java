@@ -93,37 +93,79 @@ public class AnalysisServiceImpl implements AnalysisService {
     ) {
         List<AnalysisDataDTO.EmptyStatsDTO> statsList = new ArrayList<>();
         boolean isEvenOdd = "even-odd".equals(analysisType);
+        boolean isPrime = "prime".equals(analysisType);
+        boolean isDivide3 = "divide-3".equals(analysisType);
         
         if (isEvenOdd) {
-            // Với even-odd, tính toán cho tất cả các cột (không cần filter)
+            // Với even-odd, tính toán cho tất cả các cột
             statsList.add(calculateEmptyStatsForColumn(rows, "Đầu ĐB", 
-                    row -> row.getDauDBMatch(), null, null));
+                    row -> row.getDauDBMatch(), null, null, "Chẵn/Lẻ"));
             statsList.add(calculateEmptyStatsForColumn(rows, "ĐB", 
-                    row -> row.getDbMatch(), null, null));
+                    row -> row.getDbMatch(), null, null, "Chẵn/Lẻ"));
             statsList.add(calculateEmptyStatsForColumn(rows, "Đầu G1", 
-                    row -> row.getDauG1Match(), null, null));
+                    row -> row.getDauG1Match(), null, null, "Chẵn/Lẻ"));
             statsList.add(calculateEmptyStatsForColumn(rows, "G1", 
-                    row -> row.getG1Match(), null, null));
+                    row -> row.getG1Match(), null, null, "Chẵn/Lẻ"));
+        } else if (isPrime) {
+            // Với prime, tính toán cho tất cả các cột
+            statsList.add(calculateEmptyStatsForColumn(rows, "Đầu ĐB", 
+                    row -> row.getDauDBMatch(), null, null, "Số nguyên tố"));
+            statsList.add(calculateEmptyStatsForColumn(rows, "ĐB", 
+                    row -> row.getDbMatch(), null, null, "Số nguyên tố"));
+            statsList.add(calculateEmptyStatsForColumn(rows, "Đầu G1", 
+                    row -> row.getDauG1Match(), null, null, "Số nguyên tố"));
+            statsList.add(calculateEmptyStatsForColumn(rows, "G1", 
+                    row -> row.getG1Match(), null, null, "Số nguyên tố"));
+        } else if (isDivide3) {
+            // Với divide-3, tính toán riêng cho từng loại dư (dư 0, dư 1, dư 2)
+            // Đầu ĐB
+            statsList.add(calculateEmptyStatsForColumn(rows, "Đầu ĐB", 
+                    row -> row.getDauDBMatch() == 0 ? 1 : 0, null, null, "Dư 0"));
+            statsList.add(calculateEmptyStatsForColumn(rows, "Đầu ĐB", 
+                    row -> row.getDauDBMatch() == 1 ? 1 : 0, null, null, "Dư 1"));
+            statsList.add(calculateEmptyStatsForColumn(rows, "Đầu ĐB", 
+                    row -> row.getDauDBMatch() == 2 ? 1 : 0, null, null, "Dư 2"));
+            // ĐB
+            statsList.add(calculateEmptyStatsForColumn(rows, "ĐB", 
+                    row -> row.getDbMatch() == 0 ? 1 : 0, null, null, "Dư 0"));
+            statsList.add(calculateEmptyStatsForColumn(rows, "ĐB", 
+                    row -> row.getDbMatch() == 1 ? 1 : 0, null, null, "Dư 1"));
+            statsList.add(calculateEmptyStatsForColumn(rows, "ĐB", 
+                    row -> row.getDbMatch() == 2 ? 1 : 0, null, null, "Dư 2"));
+            // Đầu G1
+            statsList.add(calculateEmptyStatsForColumn(rows, "Đầu G1", 
+                    row -> row.getDauG1Match() == 0 ? 1 : 0, null, null, "Dư 0"));
+            statsList.add(calculateEmptyStatsForColumn(rows, "Đầu G1", 
+                    row -> row.getDauG1Match() == 1 ? 1 : 0, null, null, "Dư 1"));
+            statsList.add(calculateEmptyStatsForColumn(rows, "Đầu G1", 
+                    row -> row.getDauG1Match() == 2 ? 1 : 0, null, null, "Dư 2"));
+            // G1
+            statsList.add(calculateEmptyStatsForColumn(rows, "G1", 
+                    row -> row.getG1Match() == 0 ? 1 : 0, null, null, "Dư 0"));
+            statsList.add(calculateEmptyStatsForColumn(rows, "G1", 
+                    row -> row.getG1Match() == 1 ? 1 : 0, null, null, "Dư 1"));
+            statsList.add(calculateEmptyStatsForColumn(rows, "G1", 
+                    row -> row.getG1Match() == 2 ? 1 : 0, null, null, "Dư 2"));
         } else {
             // Với 50-50, chỉ tính toán nếu có filter
             if (dauDBStart != null && dauDBEnd != null) {
                 statsList.add(calculateEmptyStatsForColumn(rows, "Đầu ĐB", 
-                        row -> row.getDauDBMatch(), dauDBStart, dauDBEnd));
+                        row -> row.getDauDBMatch(), dauDBStart, dauDBEnd, null));
             }
             
             if (dbStart != null && dbEnd != null) {
                 statsList.add(calculateEmptyStatsForColumn(rows, "ĐB", 
-                        row -> row.getDbMatch(), dbStart, dbEnd));
+                        row -> row.getDbMatch(), dbStart, dbEnd, null));
             }
             
             if (dauG1Start != null && dauG1End != null) {
                 statsList.add(calculateEmptyStatsForColumn(rows, "Đầu G1", 
-                        row -> row.getDauG1Match(), dauG1Start, dauG1End));
+                        row -> row.getDauG1Match(), dauG1Start, dauG1End, null));
             }
             
             if (g1Start != null && g1End != null) {
                 statsList.add(calculateEmptyStatsForColumn(rows, "G1", 
-                        row -> row.getG1Match(), g1Start, g1End));
+                        row -> row.getG1Match(), g1Start, g1End, null));
             }
         }
         
@@ -142,6 +184,8 @@ public class AnalysisServiceImpl implements AnalysisService {
             Integer g1Start, Integer g1End
     ) {
         boolean isEvenOdd = "even-odd".equals(analysisType);
+        boolean isPrime = "prime".equals(analysisType);
+        boolean isDivide3 = "divide-3".equals(analysisType);
         AnalysisDataDTO.AnalysisRowDTO row = new AnalysisDataDTO.AnalysisRowDTO();
         row.setDate(result.getDrawDate().format(DATE_FORMATTER));
         
@@ -181,6 +225,13 @@ public class AnalysisServiceImpl implements AnalysisService {
                     if (isEvenOdd) {
                         // Chẵn = 0, Lẻ = 1
                         row.setDauDBMatch((dauDB % 2 == 0) ? 0 : 1);
+                    } else if (isPrime) {
+                        // Số nguyên tố = 1, Không phải số nguyên tố = 0
+                        row.setDauDBMatch(isPrimeNumber(dauDB) ? 1 : 0);
+                    } else if (isDivide3) {
+                        // Chia 3: dư 0 = 0, dư 1 = 1, dư 2 = 2
+                        int remainder = dauDB % 3;
+                        row.setDauDBMatch(remainder < 0 ? remainder + 3 : remainder);
                     } else {
                         // Logic 50-50: kiểm tra trong khoảng
                         if (dauDBStart != null && dauDBEnd != null) {
@@ -200,13 +251,21 @@ public class AnalysisServiceImpl implements AnalysisService {
             
             // ĐB: lấy 2 số cuối (value field)
             row.setDb(dbDigit.getValue());
+            int dbValue = dbDigit.getValue();
             if (isEvenOdd) {
                 // Chẵn = 0, Lẻ = 1
-                row.setDbMatch((dbDigit.getValue() % 2 == 0) ? 0 : 1);
+                row.setDbMatch((dbValue % 2 == 0) ? 0 : 1);
+            } else if (isPrime) {
+                // Số nguyên tố = 1, Không phải số nguyên tố = 0
+                row.setDbMatch(isPrimeNumber(dbValue) ? 1 : 0);
+            } else if (isDivide3) {
+                // Chia 3: dư 0 = 0, dư 1 = 1, dư 2 = 2
+                int remainder = dbValue % 3;
+                row.setDbMatch(remainder < 0 ? remainder + 3 : remainder);
             } else {
                 // Logic 50-50: kiểm tra trong khoảng
                 if (dbStart != null && dbEnd != null) {
-                    row.setDbMatch((dbDigit.getValue() >= dbStart && dbDigit.getValue() <= dbEnd) ? 1 : 0);
+                    row.setDbMatch((dbValue >= dbStart && dbValue <= dbEnd) ? 1 : 0);
                 } else {
                     row.setDbMatch(0);
                 }
@@ -236,6 +295,13 @@ public class AnalysisServiceImpl implements AnalysisService {
                     if (isEvenOdd) {
                         // Chẵn = 0, Lẻ = 1
                         row.setDauG1Match((dauG1 % 2 == 0) ? 0 : 1);
+                    } else if (isPrime) {
+                        // Số nguyên tố = 1, Không phải số nguyên tố = 0
+                        row.setDauG1Match(isPrimeNumber(dauG1) ? 1 : 0);
+                    } else if (isDivide3) {
+                        // Chia 3: dư 0 = 0, dư 1 = 1, dư 2 = 2
+                        int remainder = dauG1 % 3;
+                        row.setDauG1Match(remainder < 0 ? remainder + 3 : remainder);
                     } else {
                         // Logic 50-50: kiểm tra trong khoảng
                         if (dauG1Start != null && dauG1End != null) {
@@ -255,13 +321,21 @@ public class AnalysisServiceImpl implements AnalysisService {
             
             // G1: lấy 2 số cuối (value field)
             row.setG1(g1Digit.getValue());
+            int g1Value = g1Digit.getValue();
             if (isEvenOdd) {
                 // Chẵn = 0, Lẻ = 1
-                row.setG1Match((g1Digit.getValue() % 2 == 0) ? 0 : 1);
+                row.setG1Match((g1Value % 2 == 0) ? 0 : 1);
+            } else if (isPrime) {
+                // Số nguyên tố = 1, Không phải số nguyên tố = 0
+                row.setG1Match(isPrimeNumber(g1Value) ? 1 : 0);
+            } else if (isDivide3) {
+                // Chia 3: dư 0 = 0, dư 1 = 1, dư 2 = 2
+                int remainder = g1Value % 3;
+                row.setG1Match(remainder < 0 ? remainder + 3 : remainder);
             } else {
                 // Logic 50-50: kiểm tra trong khoảng
                 if (g1Start != null && g1End != null) {
-                    row.setG1Match((g1Digit.getValue() >= g1Start && g1Digit.getValue() <= g1End) ? 1 : 0);
+                    row.setG1Match((g1Value >= g1Start && g1Value <= g1End) ? 1 : 0);
                 } else {
                     row.setG1Match(0);
                 }
@@ -284,12 +358,18 @@ public class AnalysisServiceImpl implements AnalysisService {
             String columnName,
             java.util.function.Function<AnalysisDataDTO.AnalysisRowDTO, Integer> matchGetter,
             Integer rangeStart,
-            Integer rangeEnd
+            Integer rangeEnd,
+            String defaultRangeLabel
     ) {
-        // Với even-odd, range sẽ là khoảng số nếu có, hoặc "Chẵn/Lẻ" nếu không có
-        String rangeStr = (rangeStart != null && rangeEnd != null) 
-                ? (rangeStart + "-" + rangeEnd) 
-                : "Chẵn/Lẻ";
+        // Xác định range string
+        String rangeStr;
+        if (rangeStart != null && rangeEnd != null) {
+            rangeStr = rangeStart + "-" + rangeEnd;
+        } else if (defaultRangeLabel != null) {
+            rangeStr = defaultRangeLabel;
+        } else {
+            rangeStr = "Tất cả";
+        }
         // Đếm số lần xuất hiện của mỗi độ dài rỗng
         Map<Integer, Integer> emptyCountMap = new HashMap<>();
         
@@ -336,6 +416,33 @@ public class AnalysisServiceImpl implements AnalysisService {
         stats.setCounts(counts);
         
         return stats;
+    }
+    
+    /**
+     * Kiểm tra xem một số có phải là số nguyên tố không
+     * @param n Số cần kiểm tra (0-99)
+     * @return true nếu là số nguyên tố, false nếu không
+     */
+    private boolean isPrimeNumber(int n) {
+        // Số nhỏ hơn 2 không phải số nguyên tố
+        if (n < 2) {
+            return false;
+        }
+        // 2 là số nguyên tố
+        if (n == 2) {
+            return true;
+        }
+        // Số chẵn lớn hơn 2 không phải số nguyên tố
+        if (n % 2 == 0) {
+            return false;
+        }
+        // Kiểm tra các số lẻ từ 3 đến sqrt(n)
+        for (int i = 3; i * i <= n; i += 2) {
+            if (n % i == 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 

@@ -130,7 +130,7 @@ public class CrawlerServiceImpl implements CrawlerService {
         d.setFullNumber(cleanNum);
 
         // 3. Vẫn tính và lưu 2 số cuối (OLD)
-        // Để phục vụ các tính năng thống kê lô tô hiện có
+
         if (cleanNum.length() >= 2) {
             try {
                 String last2 = cleanNum.substring(cleanNum.length() - 2);

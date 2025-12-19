@@ -5,6 +5,8 @@ import Header from './components/Header';
 import Dashboard from './components/Dashboard';
 import Analysis from './components/Analysis';
 import EvenOddAnalysis from './components/EvenOddAnalysis';
+import PrimeAnalysis from './components/PrimeAnalysis';
+import Divide3Analysis from './components/Divide3Analysis';
 import AnalysisSelector from './components/AnalysisSelector';
 import './App.css';
 
@@ -200,7 +202,7 @@ function App() {
                 return (
                     <AnalysisSelector 
                         onSelectAlgorithm={(algorithm) => {
-                            if (algorithm === '50-50' || algorithm === 'even-odd') {
+                            if (algorithm === '50-50' || algorithm === 'even-odd' || algorithm === 'prime' || algorithm === 'divide-3') {
                                 setSelectedAlgorithm(algorithm);
                             } else {
                                 alert('Chức năng đang phát triển');
@@ -218,6 +220,16 @@ function App() {
             // Nếu đã chọn thuật toán even-odd, hiển thị giao diện phân tích chẵn lẻ
             if (selectedAlgorithm === 'even-odd') {
                 return <EvenOddAnalysis onBack={() => setSelectedAlgorithm(null)} />;
+            }
+            
+            // Nếu đã chọn thuật toán prime, hiển thị giao diện phân tích số nguyên tố
+            if (selectedAlgorithm === 'prime') {
+                return <PrimeAnalysis onBack={() => setSelectedAlgorithm(null)} />;
+            }
+            
+            // Nếu đã chọn thuật toán divide-3, hiển thị giao diện phân tích chia 3
+            if (selectedAlgorithm === 'divide-3') {
+                return <Divide3Analysis onBack={() => setSelectedAlgorithm(null)} />;
             }
             
             // Các thuật toán khác (chưa phát triển)
@@ -278,7 +290,7 @@ function App() {
                 background: 'linear-gradient(135deg, #0f172a 0%, #1a202c 100%)',
                 height: '100vh',
                 display: 'flex',
-                alignItems: (activeTab === 'history' || activeTab === 'home' || (activeTab === 'analysis' && (selectedAlgorithm === '50-50' || selectedAlgorithm === 'even-odd'))) ? 'flex-start' : 'center',
+                alignItems: (activeTab === 'history' || activeTab === 'home' || (activeTab === 'analysis' && (selectedAlgorithm === '50-50' || selectedAlgorithm === 'even-odd' || selectedAlgorithm === 'prime' || selectedAlgorithm === 'divide-3'))) ? 'flex-start' : 'center',
                 justifyContent: 'center',
                 width: 'calc(100vw - 260px)',
                 boxSizing: 'border-box',
