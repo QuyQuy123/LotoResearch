@@ -1,16 +1,20 @@
 package com.example.dto.response;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class AnalysisDataDTO {
     private List<AnalysisRowDTO> rows;
+    private List<EmptyStatsDTO> emptyStats; // Thống kê rỗng
+    private Integer totalPages; // Tổng số trang
+    private Integer currentPage; // Trang hiện tại
+    private Long totalElements; // Tổng số phần tử
     
     @Data
     @NoArgsConstructor
@@ -25,6 +29,23 @@ public class AnalysisDataDTO {
         private Integer dbMatch; // 1 nếu trong khoảng, 0 nếu không
         private Integer dauG1Match; // 1 nếu trong khoảng, 0 nếu không
         private Integer g1Match; // 1 nếu trong khoảng, 0 nếu không
+    }
+    
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EmptyStatsDTO {
+        private String columnName; // Tên cột: "Đầu ĐB", "ĐB", "Đầu G1", "G1"
+        private String range; // Khoảng lọc: "51-99"
+        private List<EmptyCountDTO> counts; // Danh sách số lần xuất hiện rỗng
+        
+        @Data
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class EmptyCountDTO {
+            private Integer emptyLength; // Độ dài rỗng (3, 4, 5, 6, ...)
+            private Integer count; // Số lần xuất hiện
+        }
     }
 }
 

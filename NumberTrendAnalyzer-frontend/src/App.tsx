@@ -4,6 +4,8 @@ import LotteryTable, {type LotteryData } from './components/LotteryTable';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
 import Analysis from './components/Analysis';
+import EvenOddAnalysis from './components/EvenOddAnalysis';
+import AnalysisSelector from './components/AnalysisSelector';
 import './App.css';
 
 const API_BASE_URL = 'http://localhost:8080/api/lottery';
@@ -20,6 +22,7 @@ function App() {
     const [error, setError] = useState<string | null>(null);
     const [updating, setUpdating] = useState<boolean>(false);
     const [updateMessage, setUpdateMessage] = useState<string | null>(null);
+    const [selectedAlgorithm, setSelectedAlgorithm] = useState<string | null>(null);
 
     // Fetch dữ liệu từ API khi selectedDate thay đổi (chỉ khi đang ở tab history)
     useEffect(() => {
@@ -27,6 +30,13 @@ function App() {
             fetchLotteryData(selectedDate);
         }
     }, [selectedDate, activeTab]);
+
+    // Reset selectedAlgorithm khi chuyển sang tab khác
+    useEffect(() => {
+        if (activeTab !== 'analysis') {
+            setSelectedAlgorithm(null);
+        }
+    }, [activeTab]);
 
     const fetchLotteryData = async (date: string) => {
         setLoading(true);
@@ -185,7 +195,62 @@ function App() {
                 </div>
             );
         } else if (activeTab === 'analysis') {
-            return <Analysis />;
+            // Nếu chưa chọn thuật toán, hiển thị màn hình chọn
+            if (!selectedAlgorithm) {
+                return (
+                    <AnalysisSelector 
+                        onSelectAlgorithm={(algorithm) => {
+                            if (algorithm === '50-50' || algorithm === 'even-odd') {
+                                setSelectedAlgorithm(algorithm);
+                            } else {
+                                alert('Chức năng đang phát triển');
+                            }
+                        }} 
+                    />
+                );
+            }
+            
+            // Nếu đã chọn thuật toán 50-50, hiển thị giao diện phân tích
+            if (selectedAlgorithm === '50-50') {
+                return <Analysis onBack={() => setSelectedAlgorithm(null)} />;
+            }
+            
+            // Nếu đã chọn thuật toán even-odd, hiển thị giao diện phân tích chẵn lẻ
+            if (selectedAlgorithm === 'even-odd') {
+                return <EvenOddAnalysis onBack={() => setSelectedAlgorithm(null)} />;
+            }
+            
+            // Các thuật toán khác (chưa phát triển)
+            return (
+                <div style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    background: 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#e2e8f0'
+                }}>
+                    <div style={{ textAlign: 'center' }}>
+                        <h2 style={{ fontSize: '24px', marginBottom: '16px' }}>Chức năng đang phát triển</h2>
+                        <button
+                            onClick={() => setSelectedAlgorithm(null)}
+                            style={{
+                                padding: '10px 20px',
+                                backgroundColor: '#3b82f6',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                fontWeight: '500'
+                            }}
+                        >
+                            Quay lại
+                        </button>
+                    </div>
+                </div>
+            );
         } else {
             // Các tab khác hiển thị màn hình dark
             return (
@@ -213,7 +278,7 @@ function App() {
                 background: 'linear-gradient(135deg, #0f172a 0%, #1a202c 100%)',
                 height: '100vh',
                 display: 'flex',
-                alignItems: (activeTab === 'history' || activeTab === 'home' || activeTab === 'analysis') ? 'flex-start' : 'center',
+                alignItems: (activeTab === 'history' || activeTab === 'home' || (activeTab === 'analysis' && (selectedAlgorithm === '50-50' || selectedAlgorithm === 'even-odd'))) ? 'flex-start' : 'center',
                 justifyContent: 'center',
                 width: 'calc(100vw - 260px)',
                 boxSizing: 'border-box',

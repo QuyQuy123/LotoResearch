@@ -1,10 +1,10 @@
-// src/components/Analysis.tsx
+// src/components/EvenOddAnalysis.tsx
 import React, { useState, useEffect } from 'react';
 import './Analysis.css';
 
 const API_BASE_URL = 'http://localhost:8080/api/analysis';
 
-const STORAGE_KEY = 'analysisFilters';
+const STORAGE_KEY = 'evenOddAnalysisFilters';
 
 interface AnalysisRow {
     date: string;
@@ -39,14 +39,6 @@ interface AnalysisData {
 
 interface FilterState {
     fromDate: string;
-    dauDBStart: string;
-    dauDBEnd: string;
-    dbStart: string;
-    dbEnd: string;
-    dauG1Start: string;
-    dauG1End: string;
-    g1Start: string;
-    g1End: string;
 }
 
 // Helper functions để lưu và load từ localStorage
@@ -74,23 +66,15 @@ const getDefaultFilters = (): FilterState => {
     const date = new Date();
     date.setDate(date.getDate() - 30);
     return {
-        fromDate: date.toISOString().split('T')[0],
-        dauDBStart: '',
-        dauDBEnd: '',
-        dbStart: '',
-        dbEnd: '',
-        dauG1Start: '',
-        dauG1End: '',
-        g1Start: '',
-        g1End: ''
+        fromDate: date.toISOString().split('T')[0]
     };
 };
 
-interface AnalysisProps {
+interface EvenOddAnalysisProps {
     onBack?: () => void;
 }
 
-const Analysis: React.FC<AnalysisProps> = ({ onBack }) => {
+const EvenOddAnalysis: React.FC<EvenOddAnalysisProps> = ({ onBack }) => {
     const [data, setData] = useState<AnalysisData | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -107,35 +91,11 @@ const Analysis: React.FC<AnalysisProps> = ({ onBack }) => {
     // Phân trang
     const [currentPage, setCurrentPage] = useState<number>(0);
     const pageSize = 30;
-    const [dauDBStart, setDauDBStart] = useState<string>(
-        storedFilters?.dauDBStart || defaultFilters.dauDBStart
-    );
-    const [dauDBEnd, setDauDBEnd] = useState<string>(
-        storedFilters?.dauDBEnd || defaultFilters.dauDBEnd
-    );
-    const [dbStart, setDbStart] = useState<string>(
-        storedFilters?.dbStart || defaultFilters.dbStart
-    );
-    const [dbEnd, setDbEnd] = useState<string>(
-        storedFilters?.dbEnd || defaultFilters.dbEnd
-    );
-    const [dauG1Start, setDauG1Start] = useState<string>(
-        storedFilters?.dauG1Start || defaultFilters.dauG1Start
-    );
-    const [dauG1End, setDauG1End] = useState<string>(
-        storedFilters?.dauG1End || defaultFilters.dauG1End
-    );
-    const [g1Start, setG1Start] = useState<string>(
-        storedFilters?.g1Start || defaultFilters.g1Start
-    );
-    const [g1End, setG1End] = useState<string>(
-        storedFilters?.g1End || defaultFilters.g1End
-    );
 
     // Reset về trang đầu khi thay đổi filter
     useEffect(() => {
         setCurrentPage(0);
-    }, [fromDate, dauDBStart, dauDBEnd, dbStart, dbEnd, dauG1Start, dauG1End, g1Start, g1End]);
+    }, [fromDate]);
 
     const fetchAnalysisData = async () => {
         setLoading(true);
@@ -146,14 +106,7 @@ const Analysis: React.FC<AnalysisProps> = ({ onBack }) => {
             if (fromDate) params.append('fromDate', fromDate);
             params.append('page', currentPage.toString());
             params.append('size', pageSize.toString());
-            if (dauDBStart) params.append('dauDBStart', dauDBStart);
-            if (dauDBEnd) params.append('dauDBEnd', dauDBEnd);
-            if (dbStart) params.append('dbStart', dbStart);
-            if (dbEnd) params.append('dbEnd', dbEnd);
-            if (dauG1Start) params.append('dauG1Start', dauG1Start);
-            if (dauG1End) params.append('dauG1End', dauG1End);
-            if (g1Start) params.append('g1Start', g1Start);
-            if (g1End) params.append('g1End', g1End);
+            params.append('analysisType', 'even-odd');
             
             const response = await fetch(`${API_BASE_URL}?${params.toString()}`);
             
@@ -173,23 +126,15 @@ const Analysis: React.FC<AnalysisProps> = ({ onBack }) => {
     // Lưu filters vào localStorage mỗi khi chúng thay đổi
     useEffect(() => {
         const filters: FilterState = {
-            fromDate,
-            dauDBStart,
-            dauDBEnd,
-            dbStart,
-            dbEnd,
-            dauG1Start,
-            dauG1End,
-            g1Start,
-            g1End
+            fromDate
         };
         saveFiltersToStorage(filters);
-    }, [fromDate, dauDBStart, dauDBEnd, dbStart, dbEnd, dauG1Start, dauG1End, g1Start, g1End]);
+    }, [fromDate]);
 
     useEffect(() => {
         fetchAnalysisData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fromDate, currentPage, dauDBStart, dauDBEnd, dbStart, dbEnd, dauG1Start, dauG1End, g1Start, g1End]);
+    }, [fromDate, currentPage]);
 
     const formatDate = (dateStr: string) => {
         // dateStr format: dd-MM-yyyy
@@ -200,7 +145,7 @@ const Analysis: React.FC<AnalysisProps> = ({ onBack }) => {
     return (
         <div className="analysis-container">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                <h2 className="analysis-title">Phân Tích Kết Quả - Hàm 50/50</h2>
+                <h2 className="analysis-title">Phân Tích Kết Quả - Hàm Chẵn Lẻ</h2>
                 {onBack && (
                     <button
                         onClick={onBack}
@@ -237,98 +182,6 @@ const Analysis: React.FC<AnalysisProps> = ({ onBack }) => {
                         value={fromDate}
                         onChange={(e) => setFromDate(e.target.value)}
                         className="filter-input"
-                    />
-                </div>
-                
-                <div className="filter-group">
-                    <label>Đầu ĐB:</label>
-                    <input
-                        type="number"
-                        min="0"
-                        max="99"
-                        placeholder="Bắt đầu"
-                        value={dauDBStart}
-                        onChange={(e) => setDauDBStart(e.target.value)}
-                        className="filter-input-small"
-                    />
-                    <span>-</span>
-                    <input
-                        type="number"
-                        min="0"
-                        max="99"
-                        placeholder="Kết thúc"
-                        value={dauDBEnd}
-                        onChange={(e) => setDauDBEnd(e.target.value)}
-                        className="filter-input-small"
-                    />
-                </div>
-                
-                <div className="filter-group">
-                    <label>ĐB:</label>
-                    <input
-                        type="number"
-                        min="0"
-                        max="99"
-                        placeholder="Bắt đầu"
-                        value={dbStart}
-                        onChange={(e) => setDbStart(e.target.value)}
-                        className="filter-input-small"
-                    />
-                    <span>-</span>
-                    <input
-                        type="number"
-                        min="0"
-                        max="99"
-                        placeholder="Kết thúc"
-                        value={dbEnd}
-                        onChange={(e) => setDbEnd(e.target.value)}
-                        className="filter-input-small"
-                    />
-                </div>
-                
-                <div className="filter-group">
-                    <label>Đầu G1:</label>
-                    <input
-                        type="number"
-                        min="0"
-                        max="99"
-                        placeholder="Bắt đầu"
-                        value={dauG1Start}
-                        onChange={(e) => setDauG1Start(e.target.value)}
-                        className="filter-input-small"
-                    />
-                    <span>-</span>
-                    <input
-                        type="number"
-                        min="0"
-                        max="99"
-                        placeholder="Kết thúc"
-                        value={dauG1End}
-                        onChange={(e) => setDauG1End(e.target.value)}
-                        className="filter-input-small"
-                    />
-                </div>
-                
-                <div className="filter-group">
-                    <label>G1:</label>
-                    <input
-                        type="number"
-                        min="0"
-                        max="99"
-                        placeholder="Bắt đầu"
-                        value={g1Start}
-                        onChange={(e) => setG1Start(e.target.value)}
-                        className="filter-input-small"
-                    />
-                    <span>-</span>
-                    <input
-                        type="number"
-                        min="0"
-                        max="99"
-                        placeholder="Kết thúc"
-                        value={g1End}
-                        onChange={(e) => setG1End(e.target.value)}
-                        className="filter-input-small"
                     />
                 </div>
             </div>
@@ -467,5 +320,5 @@ const Analysis: React.FC<AnalysisProps> = ({ onBack }) => {
     );
 };
 
-export default Analysis;
+export default EvenOddAnalysis;
 
